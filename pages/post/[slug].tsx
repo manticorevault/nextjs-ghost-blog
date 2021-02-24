@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { useRouter } from "next/router";
+import { useState } from 'react'
 import styles from '../../styles/Home.module.scss'
 
 const BLOG_URL = process.env.BLOG_URL
@@ -38,6 +39,8 @@ type Post = {
 const Post: React.FC<{post: Post}> = (props) => {
 
     const { post } = props
+    const [enableLoadComments, setEnableLoadComments] = useState<boolean>
+    (true)
     const router = useRouter()
 
     if (router.isFallback) {
@@ -48,6 +51,22 @@ const Post: React.FC<{post: Post}> = (props) => {
         )
     }
 
+    function loadComments() {
+
+        setEnableLoadComments(false)
+
+        ;(window as any).disqus_config = function () {
+            this.page.url = window.location.href;  // Replace PAGE_URL with your page's canonical URL variable
+            this.page.identifier = post.slug; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+            };
+
+            const script = document.createElement("script")
+            script.src = "https://blog-arturserra.disqus.com/embed.js"
+            script.setAttribute('data-timestamp', Date.now().toString());
+
+            document.body.appendChild(script)
+    } 
+    
 	return (
 		<div className={styles.container}>
 			<p className={styles.goback}>
@@ -57,6 +76,15 @@ const Post: React.FC<{post: Post}> = (props) => {
 			</p>
 			<h1>{post.title}</h1>
 			<div dangerouslySetInnerHTML={{ __html: post.html }}></div>
+
+            {enableLoadComments && (
+                <p className={styles.goback} onClick={loadComments}> 
+                    Load comments
+                </p>
+            )}
+
+
+            <div id="disqus_thread"></div>
         </div>
     )
 }
