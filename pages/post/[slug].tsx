@@ -19,7 +19,8 @@ async function fetchPost(slug: string) {
 export const getStaticProps = async ({ params }) => {
     const post = await fetchPost(params.slug)
     return {
-      props: { post }
+      props: { post },
+      revalidate: 30
     }
 }
 
@@ -66,7 +67,7 @@ const Post: React.FC<{post: Post}> = (props) => {
 
             document.body.appendChild(script)
     } 
-    
+
 	return (
 		<div className={styles.container}>
 			<p className={styles.goback}>

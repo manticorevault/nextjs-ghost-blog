@@ -23,7 +23,8 @@ async function fetchPosts() {
 export const getStaticProps = async ({ params }) => {
   const posts = await fetchPosts()
   return {
-    props: { posts }
+    props: { posts },
+	revalidate: 30
   }
 }
 
